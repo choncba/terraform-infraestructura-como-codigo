@@ -3,7 +3,8 @@
 > **Este repositorio contiene el material de soporte y ejercicios del curso [_Terraform: Infraestructura como código_](https://links.nito.dev/terraform)
 > ofrecido en Udemy <img src="https://www.udemy.com/staticx/udemy/images/v7/logo-udemy.svg" width="50">**
 
-Si quiere acceder al link con mayor descuento actual, pulse [aquí](https://links.nito.dev/terraform).
+## En la carpeta curso está la parte desarrollada durante el mismo
+[VER](./curso/Readme.md)
 
 
 ## Índice de contenidos
@@ -48,3 +49,5 @@ Si quiere acceder al link con mayor descuento actual, pulse [aquí](https://link
 ### Contribuidores
 Agradecer a antiguos alumnos que han aportado su granito de arena para mejorar este repositorio:
 - Felix Ernesto Orduz: [@felix-orduz](https://github.com/felix-orduz)
+
+

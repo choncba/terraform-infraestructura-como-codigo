@@ -15,6 +15,7 @@ provider "aws" {
 ```
 - Definir el [método de autenticación](hhttps://registry.terraform.io/providers/hashicorp/aws/latest/docs#authentication-and-configuration)
 Si estoy logueado con SSO a aws, basta con definir la variable de entorno AWS_PROFILE con el perfil configurado:
+## ***********************
 ```
 export AWS_PROFILE=sandbox
 ```
@@ -80,3 +81,27 @@ Vemos el mensaje en el servidor web corriendo
 terraform destroy
 ```
 
+## Archivos complementarios 
+### terraform.tfstate
+Archivo JSON que nos muestra el estado de los recursos en AWS.
+Si existen cambios entre esta configuración y el archivo main.tf, al ejecutar terraform apply se aplican.
+### .terraform.lock.hcl
+Control de versión de terraform. para actualizarlo podemos hacer
+```
+terraform init -upgrade
+```
+### .terraform
+Carpeta donde se guardan plugins de providers
+
+## Outputs
+Son archivos de Terraform que nos permiten extraer información de los recursos creados en AWS sin necesidad de acceder a la consola de AWS desde el browser, por ejemplo, para saber la ip pública de nuestra instancia EC2.
+- Creamos output.tf con los outputs deseados
+- Hacemos terraform apply y luego de confirmar tenemos la salida:
+```bash
+Outputs:
+
+dns_publica = "ec2-54-80-117-153.compute-1.amazonaws.com"
+```
+
+### 2 - Load Balancer - ./curso/2-LoadBalancer/main.tf
+Creamos un load balancer que permita conectarme con 2 instancias EC2 idénticas dentro de la misma AZ (us-east-1), pero en datacenters distintos (1A y 1B) por redundancia. El LB dirigirá el tráfico por defecto a 1A, y a 1B en caso de que 1A no esté disponible.

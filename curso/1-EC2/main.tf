@@ -5,7 +5,7 @@ provider "aws" {
 
 # Definimos el recurso a implementar
 resource "aws_instance" "server1" {
-  # Imagen del SO a utilizar, lo sacamos de la lista de instancias de la consola de aws
+  # Imagen del SO a utilizar, lo sacamos de la lista de imágenes de instancias EC2 de la consola de aws
   ami = "ami-053b0d53c279acc90" 
   # Capacidad de la VM
   instance_type = "t2.micro"
