@@ -104,4 +104,28 @@ dns_publica = "ec2-54-80-117-153.compute-1.amazonaws.com"
 ```
 
 ### 2 - Load Balancer - ./curso/2-LoadBalancer/main.tf
-Creamos un load balancer que permita conectarme con 2 instancias EC2 idénticas dentro de la misma AZ (us-east-1), pero en datacenters distintos (1A y 1B) por redundancia. El LB dirigirá el tráfico por defecto a 1A, y a 1B en caso de que 1A no esté disponible.
+Creamos un load balancer que permita conectarme con 2 instancias EC2 idénticas dentro de la misma AZ (us-east-1), pero en datacenters distintos (1A y 1B) por redundancia. El LB dirigirá el tráfico por defecto a 1A, y a 1B en caso de que 1A no esté disponible. 
+- Definimos 2 instancias EC2 igual que en el punto anterior con distinto nombre
+- Mantenemos el mismo Security Group del punto anterior
+Para poder asignar cada EC2 a una VPC en cada AZ, podemos seleccionar el id de la VPC deseada de la [consola de AWS](https://us-east-1.console.aws.amazon.com/vpc/home?region=us-east-1#vpcs:) y lo agregamos a la entrada de la instancia como 
+```
+subnet_id = "subnet-01e50bfb5f6a3c07a"
+```
+Otra forma de obtener información de los recursos de AWS que no fueron creados por Terraform, es usar un [datasource](https://registry.terraform.io/providers/hashicorp/aws/3.12.0/docs/data-sources/vpc).
+```
+data "aws_subnet" "az1" {
+  # vpc_id = "AE-Media-VPC"
+  availability_zone = "us-east-1a"
+}
+```
+Y referenciando al mismo en la definición de la EC2
+```
+subnet_id = data.aws_subnet.az1.id
+```
+- Opcionalmente, modificamos los outputs.tf para obtener la información
+- Aplicamos los cambios con
+```
+terraform init
+terraform plan
+terraform apply
+```
