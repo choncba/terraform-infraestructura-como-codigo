@@ -23,3 +23,8 @@ output "ipv4_az_1b" {
     description = "IP v4 del servidor 2:"
     value = aws_instance.server2.public_ip
 }
+
+output "dns_publica_load_balancer" {
+  description = "DNS pública del load balancer"
+  value = "http://${aws_lb.alb.dns_name}"
+}

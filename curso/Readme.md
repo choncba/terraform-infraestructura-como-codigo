@@ -129,3 +129,81 @@ terraform init
 terraform plan
 terraform apply
 ```
+- En main.tf creamos los recursos para el load balancer y su security group, de acuerdo a la [documentacion](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/lb)
+```
+# Definimos el load balancer
+resource "aws_lb" "alb" {
+  load_balancer_type = "application"
+  name = "servers-alb"
+  # Security group del LB, no es el mismo de las EC2
+  security_groups = [ aws_security_group.alb.id ]
+  # Indicamos las subredes que alcanza el LB, reutilizando los datasource anteriores
+  subnets = [ data.aws_subnet.az1.id, data.aws_subnet.az2.id ]
+}
+
+resource "aws_security_group" "alb" {
+  name = "alb-sg"
+  # Tambien definimos que se asigne este security group a la misma VPC
+  vpc_id = data.aws_vpc.vpc_ae.id
+  # Para el LB damos acceso al puerto 80 y después direccionamos al 8080 de las EC2
+  ingress {
+    cidr_blocks = [ "0.0.0.0/0" ]
+    description = "Acceso al puerto 80 en el LB"
+    from_port = 80
+    to_port = 80
+    protocol = "TCP"
+  }
+}
+```
+- Definimos un Target Group para las instancias EC2 de acuerdo a la [documentación](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/lb_target_group)
+```
+# Definimos un Target Group para las instancias EC2
+resource "aws_lb_target_group" "alb-tg" {
+  name = "alb-ec2-targetgroup"
+  port = 80
+  vpc_id = data.aws_vpc.vpc_ae.id
+  protocol = "HTTP"
+
+  # Defino una prueba de comprobación para que el LB decida a qué instancia mandar tráfico
+  health_check {
+    enabled = true
+    matcher = "200" # código 200 al request HTTP
+    path = "/"      
+    port = "8080"   # Puerto en la EC2
+    protocol = "HTTP"
+  }
+}
+```
+- Definimos un attachment para asociar cada instancia EC2 al target group anterior
+```
+# Defino los attachments para asignar el targetgroup a las instancias
+resource "aws_lb_target_group_attachment" "server1" {
+  target_group_arn = aws_lb_target_group.alb-tg.arn
+  target_id = aws_instance.server1.id
+  port = 8080
+}
+
+resource "aws_lb_target_group_attachment" "server2" {
+  target_group_arn = aws_lb_target_group.alb-tg.arn
+  target_id = aws_instance.server2.id
+  port = 8080
+}
+```
+- Definimos un listener para el LB, que redirija el puerto 80 hacia el 8080
+```
+resource "aws_lb_listener" "alb-tg-listener" {
+  load_balancer_arn = aws_lb.alb.arn
+  port = 80
+  protocol = "HTTP"
+  default_action {
+   target_group_arn = aws_lb_target_group.alb-tg.arn
+   type = "forward"  
+  }
+}
+```
+- Actualizo los outputs para que muestre el DNS público del LB
+- Validamos y aplicamos los cambios
+```
+terraform validate
+terraform apply
+```
