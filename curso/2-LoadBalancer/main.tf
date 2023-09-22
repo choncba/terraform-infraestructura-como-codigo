@@ -85,7 +85,7 @@ resource "aws_security_group" "terraform_sg" {
   ingress {
     # Permitimos ahora el acceso solamente al LB
     # cidr_blocks = [ "0.0.0.0/0" ]
-    security_groups = [aws_lb.alb.id]
+    security_groups = [aws_security_group.alb.id]
     description = "Acceso al puerto 8080"
     from_port = 8080
     to_port = 8080
@@ -160,7 +160,7 @@ resource "aws_lb_target_group_attachment" "server2" {
 resource "aws_lb_listener" "alb-tg-listener" {
   load_balancer_arn = aws_lb.alb.arn
   port = 80
-  protocol = "HTTP"
+
   default_action {
    target_group_arn = aws_lb_target_group.alb-tg.arn
    type = "forward"  

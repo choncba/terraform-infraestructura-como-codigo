@@ -3,6 +3,12 @@
 ## Entorno
 - Instalar Terraform
 - Instalar plugin de Terraform en VS Code
+- Definir el [método de autenticación](hhttps://registry.terraform.io/providers/hashicorp/aws/latest/docs#authentication-and-configuration)
+Si estoy logueado con SSO a aws, basta con definir la variable de entorno AWS_PROFILE con el perfil configurado:
+## ***********************
+```
+export AWS_PROFILE=sandbox
+```
 
 ## Unidades
 ### 1 - Crear servidor EC2 - ./curso/1-EC2/main.tf
@@ -12,12 +18,6 @@ En main.tf
 provider "aws" {
   region = "us-east-1"
 }
-```
-- Definir el [método de autenticación](hhttps://registry.terraform.io/providers/hashicorp/aws/latest/docs#authentication-and-configuration)
-Si estoy logueado con SSO a aws, basta con definir la variable de entorno AWS_PROFILE con el perfil configurado:
-## ***********************
-```
-export AWS_PROFILE=sandbox
 ```
 - Definir el recurso a implementar
 ```

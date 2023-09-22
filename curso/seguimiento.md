@@ -2,3 +2,4 @@
 15/09/2023 - https://tecom.udemy.com/course/terraform-infraestructura-como-codigo/learn/lecture/24702112#questions/19060226
 18/09/2023 - https://tecom.udemy.com/course/terraform-infraestructura-como-codigo/learn/lecture/24702170#overview
 19/09/2023 - https://tecom.udemy.com/course/terraform-infraestructura-como-codigo/learn/lecture/24722184#overview
+22/09/2023 - https://tecom.udemy.com/course/terraform-infraestructura-como-codigo/learn/lecture/25793514#questions/16280466
