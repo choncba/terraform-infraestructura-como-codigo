@@ -207,3 +207,39 @@ resource "aws_lb_listener" "alb-tg-listener" {
 terraform validate
 terraform apply
 ```
+
+### 3 - Variables
+Partiendo del ejemplo del load balancer, vamos a crear el archivo variables.tf, donde definimos las variables a utilizar en main.tf.
+El valor asignado a esas variables puede darse de múltiples formas:
+- Hacemos ```terraform apply``` nos aparecerá un prompt consultando por el valor que le queremos dar a cada variable.
+- Por línea de comandos:
+```
+terraform plan -var="server_port=8080" -var="lb_port=80" -var="EC2_TYPE=t2.micro"
+```
+- Con un archivo .tfvars:
+```
+server_port=8080
+lb_port=80
+EC2_TYPE=t2.micro
+```
+Para usarlo hacemos: ```terraform apply -var-file="vars.tfvars```
+- Con un archivo json:
+```json
+{
+    "server_port": 8080,
+    "lb_port": 80,
+    "EC2_TYPE":"t2.micro"
+}
+```
+* Si omitimos alguna de las variables en el archivo de configuración, terraform las consulta por consola
+* Terraform levanta automáticamente cualquier archivo que tenga en el nombre '.tfvars' (ej: vars.tfvars.json) 
+- Usando variables de entorno, las definimos `TF_VAR_<NOMBRE_DE_LA VARIABLE>`
+Ejemplo: `TF_VAR_lb_port=80`
+- Valores por defecto: Se agregan dentro de la definición de las variables en `variables.tf` con el tag `default`.
+En este caso, si hacemos `terraform apply` sin ningún flag. utiliza valores por defecto
+* Precedencia
+- 1 Variables de entorno
+- 2 *.tfvars
+- 3 *. tfvars.json
+- 4 *.auto.tfvars / *.auto.tfvars.json
+- 5 flags -var / -var-file
