@@ -243,3 +243,57 @@ En este caso, si hacemos `terraform apply` sin ningún flag. utiliza valores por
 - 3 *. tfvars.json
 - 4 *.auto.tfvars / *.auto.tfvars.json
 - 5 flags -var / -var-file
+
+### Variables dinámicas 
+Podemos definir una variable con el tipo `any`. Se asignará a la variable el tipo que se le asigne, number, string, list, etc.
+En el caso de listas `[any]` si ponemos distintos tipos, terraform convierte todos los elementos a string.
+
+### Variables map
+Permiten asociar pares key/value como un diccionario.
+```
+variable "UBUNTU_AMI" {
+  description = "ID de imagen de Ubuntu segun región de AWS"
+  type = map(string)
+  default = {
+    "us-east-1" = "ami-053b0d53c279acc90"
+    "eu-west-1" = "ami-095df877cd67dfd34"
+  }
+  
+}
+```
+Para instanciarla hacemos `var.UBUNTU_AMI["us-east-1"]`
+
+### Validación
+Nos permite validar valores de las variables mediante el bloque `validate` en la definicion de la variable.
+```
+variable "server_port" {
+  description = "Puerto de los servidores"
+  type = number
+  default = 8080
+
+  validation {
+    condition = var.server_port >= 5000 && var.server_port <= 10000
+    error_message = "Utilizar puertos entre 5000 y 10000"
+  }
+}
+```
+
+### 4 - Bucles
+Terraform es un lenguaje declarativo, por lo que no posee bucles, para solucionarlo, disponemos de meta argumentos:
+- count
+- for_each
+- depends_on
+- provider
+- lifecycle
+
+* count
+```
+resource "aws_iam_user" "usuarios" {
+  count = 2                         # Defino el Numero de recursos a crear
+  name = "user${count.index}"       # Nombre dinámico con el indice
+}
+```
+Esto creará 2 usuarios iam con el nombre user0 y user1.
+```
+# Itero una lista de usuarios y genero un recurso para cada uno
+```
