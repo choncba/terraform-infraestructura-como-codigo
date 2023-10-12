@@ -296,4 +296,69 @@ resource "aws_iam_user" "usuarios" {
 Esto creará 2 usuarios iam con el nombre user0 y user1.
 ```
 # Itero una lista de usuarios y genero un recurso para cada uno
+variable "users" {
+  type = list(string)
+  default = ["juan", "pedro", "carlos", "jose"]
+}
+
+resource "aws_iam_user" "usuarios" {
+  count = length(var.users)           # Extraigo la cantidad de usuarios de la lista
+  name = "${var.users[count.index]}"  # Extraigo los nombres de una variable con el indice
+}
 ```
+* for_each
+Similar a count, especificamente para recorrer listas. La ventaja principal es que crea las keys con los valores de la lista, no la posición, por lo que el orden de los elementos no afecta.
+```
+resource "aws_iam_user" "users" {
+  for_each = var.usr
+  name = "${each.value}"
+}
+```
+* for
+Nos permite recorrer una lista
+```
+output "nombre_a_arn" {
+  # value será un set de nombre: arn
+  value = { for usuario in aws_iam_user.ejemplo : usuario.name => usuario.arn }
+}
+
+output "nombres_usuarios" {
+  #value será una lista con los nombres de los usuarios
+  value = [for usuario in aws_iam_user.ejemplo : usuario.name]
+}
+```
+* Splat
+Expresión que sirve para iterar sobre listas => [*]
+```
+output "nombres_usuarios" {
+  #value será una lista con los nombres de los usuarios
+  value = aws_iam_user.ejemplo[*].name
+}
+```
+
+* Variables <b>*local*</b>
+<br>Sirven para definir constantes, similar a una variable de entorno, y podemos referenciarla en cualquier otro archivo de terraform, siempre que estemos en la misma carpeta
+```
+# Las definimos
+locals {
+  region = "us-east-1"
+}
+
+* Las referenciamos:
+
+reg = local.region
+
+* tambien podemos combinar variables
+locals {
+  # a la variable var.ubuntu_ami["us-east-1"] la asignamos
+  region  = "us-east-1"
+  ami     = var.ubuntu_ami[local.region]
+}
+
+* Y luego podemos invocar
+ami = local.ami
+```
+
+### 5 - Refactorizamos el LoadBalancer
+Aplicamos los métodos anteriores para refactorizar y simplificar el código del loadbalancer. Tambien lo hacemos en los outputs
+* Al quedar modular, si queremos agregar más servidores/AZ simplemente lo agregamos a la variable servers
