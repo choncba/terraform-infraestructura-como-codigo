@@ -362,3 +362,6 @@ ami = local.ami
 ### 5 - Refactorizamos el LoadBalancer
 Aplicamos los métodos anteriores para refactorizar y simplificar el código del loadbalancer. Tambien lo hacemos en los outputs
 * Al quedar modular, si queremos agregar más servidores/AZ simplemente lo agregamos a la variable servers
+
+### 6 - Módulos
+
